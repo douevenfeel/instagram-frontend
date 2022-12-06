@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Layout } from '../components/Layout';
+import axiosInstance from '../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../store/reducers/userReducer';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthPage = () => {
+    const { user } = useSelector((store) => store.user);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [type, setType] = useState('signin');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -12,11 +20,19 @@ export const AuthPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const values = { username, password };
-        console.log(values);
+        const auth = async () => {
+            await axiosInstance.post(`/auth/${type}`, values).then((response) => dispatch(setUser(response?.data)));
+        };
+        auth();
         setPassword('');
     };
+
+    useEffect(() => {
+        user.username && navigate('/');
+    }, [navigate, user.username]);
+
     return (
-        <div className='flex w-full h-screen pt-[72px] justify-center items-center'>
+        <Layout classes='flex justify-center items-center'>
             <form className='flex flex-col w-80 gap-4' onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
                     <label htmlFor='username'>Имя пользователя</label>
@@ -39,13 +55,13 @@ export const AuthPage = () => {
                         placeholder='Пароль...'
                     />
                 </div>
-                <button className='h-10 py-2 px-6 rounded-md bg-blue-500 text-white' type='submit'>
+                <button className='h-10 py-2 px-6 rounded-md bg-blue-500 text-white outline-none' type='submit'>
                     {type === 'signin' ? 'Войти' : 'Зарегистрироваться'}
                 </button>
                 <button className='self-center underline' onClick={handleType}>
                     {type === 'signin' ? 'Зарегистрироваться' : 'Войти'}
                 </button>
             </form>
-        </div>
+        </Layout>
     );
 };
