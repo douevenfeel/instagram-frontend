@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import axiosInstance from '../api';
 import { useDebounce } from '../hooks/useDebounce';
 import { logout, setUsers, resetUsers } from '../store/reducers/userReducer';
+import { UserIcon } from '../assets';
 
 export const Header = () => {
     const location = useLocation();
@@ -17,11 +18,6 @@ export const Header = () => {
             await axiosInstance.post('/auth/logout').then(() => dispatch(logout()));
         };
         fetchLogout();
-    };
-
-    const handleVisit = (e) => {
-        e.stopPropagation();
-        console.log('stop');
     };
 
     useEffect(() => {
@@ -40,47 +36,45 @@ export const Header = () => {
         !!debouncedQ && fetchUsers();
     }, [debouncedQ, dispatch]);
     return (
-        <div className='w-full flex py-6 px-10 items-center justify-between absolute top-0 left-0'>
-            <Link to='/' className='font-semibold text-3xl'>
+        <div className='w-full flex py-2 px-4 items-center justify-between gap-4 absolute top-0 left-0 flex-col md:flex-row md:py-4 md:px-10'>
+            <Link to='/' className='font-semibold text-2xl'>
                 INSTAGRAM
             </Link>
             {!isAuth && (
                 <>
-                    <div className='flex flex-col'>
+                    <div className='flex'>
                         <div className='flex gap-4'>
                             <input
-                                placeholder='Введите имя пользователя'
-                                className='border h-10 py-2 px-4 outline-none rounded-md w-80'
+                                placeholder='Имя пользователя...'
+                                className='border h-10 py-2 px-4 outline-none rounded-md max-w-80'
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                                 onFocus={() => setIsVisible(true)}
                             />
-                            <button onClick={(e) => setIsVisible((prev) => !prev)}>
-                                {isVisible ? 'Скрыть' : 'Показать'}
-                            </button>
+                            {q && (
+                                <button onClick={(e) => setIsVisible((prev) => !prev)}>
+                                    {isVisible ? 'Скрыть' : 'Показать'}
+                                </button>
+                            )}
                         </div>
                         {isVisible && users.length > 0 && (
                             <div className='flex flex-col absolute h-[200px] overflow-auto gap-1 mt-11'>
                                 {users.map((user) => (
-                                    <>
-                                        <Link
-                                            key={user.id}
-                                            className='border h-10 py-2 px-4 outline-none rounded-md w-80 bg-white'
-                                            to={`/user/${user.username}`}
-                                            onClick={handleVisit}
-                                        >
-                                            {user.username}
-                                        </Link>
-                                    </>
+                                    <Link
+                                        key={user.id}
+                                        className='border h-10 py-2 px-4 outline-none rounded-md w-80 bg-white'
+                                        to={`/user/${user.username}`}
+                                    >
+                                        {user.username}
+                                    </Link>
                                 ))}
                             </div>
                         )}
                     </div>
-
                     <div className='flex gap-4 items-center'>
                         {!!user.username && (
-                            <Link to='/create' className='py-2 px-6 rounded-md bg-blue-500 text-white'>
-                                Добавить пост
+                            <Link to={`/user/${user.username}`}>
+                                <UserIcon className='w-10 h-10' />
                             </Link>
                         )}
                         {user.username ? <button onClick={handleLogout}>Выйти</button> : <Link to='/auth'>Войти</Link>}{' '}
