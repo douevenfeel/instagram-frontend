@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axiosInstance from '../api';
 import { Layout } from '../components/Layout';
 import { UserEstimates } from '../components/UserEstimates';
@@ -10,9 +10,8 @@ import { fetchPosts, resetProfilePosts, setProfilePosts } from '../store/reducer
 export const UserPage = () => {
     const { username } = useParams();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [category, setCategory] = useState('posts');
-    const { author } = useSelector((store) => store.post);
+    const { author, fetch, profilePosts } = useSelector((store) => store.post);
     const { user } = useSelector((store) => store.user);
 
     const handleCategory = (value) => {
@@ -22,7 +21,7 @@ export const UserPage = () => {
 
     const handleBan = () => {
         const fetchBan = async () => {
-            await axiosInstance.post(`/user/ban/${author.id}`).then(() => navigate('/'));
+            await axiosInstance.post(`/user/ban/${username}`).then(() => dispatch(fetchPosts()));
         };
         fetchBan();
     };
@@ -32,15 +31,16 @@ export const UserPage = () => {
             await axiosInstance.get(`/user/${username}`).then((response) => dispatch(setProfilePosts(response?.data)));
         };
         fetchProfilePosts();
-
         return () => dispatch(resetProfilePosts());
-    }, [dispatch, username]);
+    }, [dispatch, username, fetch]);
 
     return (
         <Layout classes='flex items-center flex-col gap-8'>
             {author ? (
                 <>
                     <p className='font-semibold text-2xl'>@{username}</p>
+                    <p className='font-semibold text-2xl'>Количество постов: {profilePosts.length}</p>
+                    <p className='font-semibold text-2xl'>Количество лайков: {author.likesCount}</p>
                     {user?.username === username && (
                         <>
                             <Link to='/create' className='py-2 px-6 rounded-md bg-blue-500 text-white'>
@@ -68,7 +68,7 @@ export const UserPage = () => {
                     )}
                     {user.role === 'MODERATOR' && user?.username !== username && (
                         <button className='py-2 px-6 rounded-md bg-red-500 text-white' onClick={handleBan}>
-                            Забанить
+                            {author.isBanned ? 'Разбанить' : 'Забанить'}
                         </button>
                     )}
                     {category === 'posts' ? <UserPosts /> : <UserEstimates />}

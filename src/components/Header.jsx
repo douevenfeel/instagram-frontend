@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api';
 import { useDebounce } from '../hooks/useDebounce';
 import { logout, setUsers, resetUsers } from '../store/reducers/userReducer';
@@ -9,13 +9,17 @@ import { UserIcon } from '../assets';
 export const Header = () => {
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { user, users } = useSelector((store) => store.user);
     const [isVisible, setIsVisible] = useState(false);
     const isAuth = location.pathname.includes('auth');
 
     const handleLogout = () => {
         const fetchLogout = async () => {
-            await axiosInstance.post('/auth/logout').then(() => dispatch(logout()));
+            await axiosInstance
+                .post('/auth/logout')
+                .then(() => dispatch(logout()))
+                .then(location.pathname.includes('moderator') && navigate('/'));
         };
         fetchLogout();
     };
@@ -40,7 +44,7 @@ export const Header = () => {
             <Link to='/' className='font-semibold text-2xl'>
                 INSTAGRAM
             </Link>
-            {!isAuth && (
+            {!isAuth && !user.isBanned ? (
                 <>
                     <div className='flex'>
                         <div className='flex gap-4'>
@@ -73,13 +77,18 @@ export const Header = () => {
                     </div>
                     <div className='flex gap-4 items-center'>
                         {!!user.username && (
-                            <Link to={`/user/${user.username}`}>
-                                <UserIcon className='w-10 h-10' />
-                            </Link>
+                            <>
+                                {user.role === 'MODERATOR' && <Link to='/moderator'>MODERATOR</Link>}
+                                <Link to={`/user/${user.username}`}>
+                                    <UserIcon className='w-10 h-10' />
+                                </Link>
+                            </>
                         )}
                         {user.username ? <button onClick={handleLogout}>Выйти</button> : <Link to='/auth'>Войти</Link>}{' '}
                     </div>
                 </>
+            ) : (
+                <button onClick={handleLogout}>Выйти</button>
             )}
         </div>
     );

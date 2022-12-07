@@ -15,7 +15,9 @@ export const Post = ({ id, photo, description, user: author, likes }) => {
     const location = useLocation();
 
     const handleEstimate = async () => {
-        user.username && (await axiosInstance.post(`/post/estimate/${id}`).then(() => dispatch(fetchPosts())));
+        !location.pathname.includes('moderator') &&
+            user.username &&
+            (await axiosInstance.post(`/post/estimate/${id}`).then(() => dispatch(fetchPosts())));
     };
 
     const handleDoubleClick = (e) => {
@@ -50,12 +52,12 @@ export const Post = ({ id, photo, description, user: author, likes }) => {
             await axiosInstance.delete(`/post/${id}`).then(() => dispatch(fetchPosts()));
         };
         fetchDelete();
-        navigate(`/user/${author?.username}`);
+        location.pathname.includes('post') && navigate(`/user${author?.username}`);
     };
 
     useEffect(() => {
         user?.username && setIsLiked(!!(!!likes && likes.filter((like) => like.userId === user.id)[0]));
-    }, [likes, user.id, user?.username]);
+    }, [likes, location.pathname, user.id, user?.username]);
 
     return (
         <div className='max-w-[720px] w-[92vw] flex flex-col'>
@@ -85,9 +87,10 @@ export const Post = ({ id, photo, description, user: author, likes }) => {
                         </>
                     )}
                     <button onClick={handleEdit}>{isEdit ? 'Отменить изменения' : 'Изменить'}</button>
-                    <button onClick={handleDelete}>Удалить пост</button>
+                    {user.role !== 'MODERATOR' && <button onClick={handleDelete}>Удалить пост</button>}
                 </>
             )}
+            {user.role === 'MODERATOR' && <button onClick={handleDelete}>Удалить пост</button>}
         </div>
     );
 };

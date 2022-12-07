@@ -6,7 +6,7 @@ const initialState = {
     profilePosts: [],
     estimatedPosts: [],
     post: {},
-    author: '',
+    author: {},
 };
 
 const postSlice = createSlice({
@@ -20,18 +20,20 @@ const postSlice = createSlice({
         setPosts: (state, { payload }) => {
             console.log('setPosts');
             state.fetch = false;
-            state.posts = payload.rows;
+            console.log(payload);
+            state.posts = payload;
         },
         setProfilePosts: (state, { payload }) => {
             console.log('setProfilePosts');
+            state.profilePosts = payload.user.posts;
+            state.author = { ...payload.user, likesCount: payload.likesCount };
+            delete state.author.posts;
             state.fetch = false;
-            state.profilePosts = payload.posts;
-            state.author = payload.username;
         },
         setEstimated: (state, { payload }) => {
             console.log('setEstimated');
             state.fetch = false;
-            state.estimatedPosts = payload.posts;
+            state.estimatedPosts = payload;
         },
         setPost: (state, { payload }) => {
             console.log('setPost');

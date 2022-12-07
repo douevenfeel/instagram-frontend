@@ -13,12 +13,16 @@ const userSlice = createSlice({
         },
         setUsers: (state, { payload }) => {
             console.log('setUsers');
+            console.log(payload);
             state.users = payload;
         },
         resetUsers: (state) => {
             state.users = [];
         },
-        logout: () => initialState,
+        logout: (state) => {
+            state.user = {};
+            localStorage.removeItem('token');
+        },
     },
 });
 

@@ -19,7 +19,7 @@ export const AuthPage = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (username && password) {
+        if (!!username && !!password) {
             const values = { username, password };
             const auth = async () => {
                 await axiosInstance.post(`/auth/${type}`, values).then((response) => dispatch(setUser(response?.data)));

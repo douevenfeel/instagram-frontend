@@ -13,13 +13,18 @@ export const UserEstimates = () => {
         };
         fetchEstimatedPosts();
 
-        return () => dispatch(resetEstimated())
+        return () => dispatch(resetEstimated());
     }, [dispatch, fetch]);
 
     return (
         <div className='max-w-[728px] flex items-center flex-wrap md:gap-1'>
             {estimatedPosts.length > 0 ? (
-                estimatedPosts.map((estimatedPost) => <PostCard key={estimatedPost.id} {...estimatedPost.post} />)
+                estimatedPosts.map(
+                    (estimatedPost) =>
+                        !estimatedPost?.post?.user?.isBanned && (
+                            <PostCard key={estimatedPost.id} {...estimatedPost.post} />
+                        )
+                )
             ) : (
                 <p className='font-semibold text-2xl'>Здесь пока пусто</p>
             )}
