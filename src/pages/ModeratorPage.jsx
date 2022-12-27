@@ -5,7 +5,7 @@ import axiosInstance from '../api';
 import { Layout } from '../components/Layout';
 import { Post } from '../components/Post';
 import { UsersModerator } from '../components/UsersModerator';
-import { resetPosts, setPosts } from '../store/reducers/postReducer';
+import { setPosts } from '../store/reducers/postReducer';
 
 export const ModeratorPage = () => {
     const dispatch = useDispatch();
@@ -23,10 +23,7 @@ export const ModeratorPage = () => {
             await axiosInstance.get('/post').then((response) => dispatch(setPosts(response?.data)));
         };
         fetchPosts();
-        !user.role === 'MODERATOR' && navigate('/');
-        // !!user.username ? navigate('/') : user.role !== 'MODERATOR' ? navigate('/') : fetchPosts();
-        // !!user.username && console.log('user', !!user.username && user.role);
-        return () => dispatch(resetPosts());
+        user.role !== 'MODERATOR' && navigate('/');
     }, [dispatch, navigate, user.role, fetch]);
 
     return (

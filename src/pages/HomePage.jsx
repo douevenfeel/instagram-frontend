@@ -8,7 +8,7 @@ import { resetPosts, setPosts } from '../store/reducers/postReducer';
 export const HomePage = () => {
     const dispatch = useDispatch();
     const { posts, fetch } = useSelector((store) => store.post);
-    const [order, setOrder] = useState({ title: 'new', order: ['createdAt', 'asc'] });
+    const [order, setOrder] = useState({ title: 'new', order: ['createdAt', 'desc'] });
     useEffect(() => {
         const values = { order: order.order };
         const fetchPosts = async () => {
@@ -21,18 +21,18 @@ export const HomePage = () => {
 
     return (
         <Layout classes='flex flex-col items-center gap-8'>
-            <div className='flex justify-around w-1/2'>
+            <div className='flex justify-around w-1/2 gap-2'>
                 <button
-                    onClick={() => setOrder({ title: 'new', order: ['createdAt', 'asc'] })}
-                    className={`border h-10 py-2 px-4 outline-none rounded-md ${
+                    onClick={() => setOrder({ title: 'new', order: ['createdAt', 'desc'] })}
+                    className={`border min-h-10 py-2 px-4 outline-none rounded-md ${
                         order.title === 'new' ? 'bg-gray-200' : ''
                     }`}
                 >
                     Сначала новые
                 </button>
                 <button
-                    onClick={() => setOrder({ title: 'old', order: ['createdAt', 'desc'] })}
-                    className={`border h-10 py-2 px-4 outline-none rounded-md ${
+                    onClick={() => setOrder({ title: 'old', order: ['createdAt', 'asc'] })}
+                    className={`border min-h-10 py-2 px-4 outline-none rounded-md ${
                         order.title === 'old' ? 'bg-gray-200' : ''
                     }`}
                 >
@@ -40,7 +40,7 @@ export const HomePage = () => {
                 </button>
                 <button
                     onClick={() => setOrder({ title: 'popular', order: ['likesCount', 'desc'] })}
-                    className={`border h-10 py-2 px-4 outline-none rounded-md ${
+                    className={`border min-h-10 py-2 px-4 outline-none rounded-md ${
                         order.title === 'popular' ? 'bg-gray-200' : ''
                     }`}
                 >

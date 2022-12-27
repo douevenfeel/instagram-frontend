@@ -4,8 +4,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api';
 import { fetchPosts } from '../store/reducers/postReducer';
 import { FcLike, FcLikePlaceholder } from 'react-icons/fc';
+import dayjs from 'dayjs';
 
-export const Post = ({ id, photo, description, user: author, likes }) => {
+export const Post = ({ id, photo, description, user: author, likes, createdAt }) => {
     const { user } = useSelector((store) => store.user);
     const [isLiked, setIsLiked] = useState(false);
     const [value, setValue] = useState('');
@@ -74,6 +75,7 @@ export const Post = ({ id, photo, description, user: author, likes }) => {
                 @{author?.username}
             </Link>
             <p>{description}</p>
+            <p className='text-gray-500'>{dayjs(createdAt).format('HH:MM DD.MM.YY')}</p>
             {location.pathname.includes('post') && author?.username === user?.username && (
                 <>
                     {isEdit && (
