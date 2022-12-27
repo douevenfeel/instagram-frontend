@@ -75,7 +75,7 @@ export const Post = ({ id, photo, description, user: author, likes, createdAt })
                 @{author?.username}
             </Link>
             <p>{description}</p>
-            <p className='text-gray-500'>{dayjs(createdAt).format('HH:MM DD.MM.YY')}</p>
+            <p className='text-gray-500'>{dayjs(createdAt).format('HH:mm DD.MM.YY')}</p>
             {location.pathname.includes('post') && author?.username === user?.username && (
                 <>
                     {isEdit && (

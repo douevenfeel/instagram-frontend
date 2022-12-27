@@ -9,7 +9,7 @@ export const BannedPage = () => {
         <Layout classes='flex items-center flex-col'>
             <p className='font-semibold text-2xl'>Ваш аккаунт заблокирован</p>
             <p className='font-semibold text-2xl'>
-                Дата блокировки: <span className='font-normal'>{dayjs(user.updatedAt).format('HH:MM DD.MM.YYYY')}</span>
+                Дата блокировки: <span className='font-normal'>{dayjs(user.updatedAt).format('HH:mm DD.MM.YYYY')}</span>
             </p>
         </Layout>
     );
